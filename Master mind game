@@ -1,0 +1,52 @@
+import random
+
+def generate_code():
+    """Generate a random 4-digit code."""
+    return [random.randint(1, 6) for _ in range(4)]
+
+def get_user_guess():
+    """Prompt the user to enter their guess."""
+    while True:
+        guess = input("Enter your guess (4 digits from 1 to 6): ").strip()
+        if len(guess) == 4 and guess.isdigit() and all(1 <= int(num) <= 6 for num in guess):
+            return [int(num) for num in guess]
+        print("Invalid input. Please enter 4 digits from 1 to 6.")
+
+def evaluate_guess(secret_code, user_guess):
+    """Evaluate the guess and provide feedback."""
+    exact_matches = sum(1 for x, y in zip(secret_code, user_guess) if x == y)
+
+    secret_set = set(secret_code)
+    guess_set = set(user_guess)
+
+    total_matches = sum(min(secret_code.count(num), user_guess.count(num)) for num in secret_set & guess_set)
+    total_matches -= exact_matches
+
+    return exact_matches, total_matches
+
+def mastermind():
+    """Main function to run the Mastermind game."""
+    print("Welcome to Mastermind!")
+    print("Try to guess the 4-digit code.")
+    print("Each digit is between 1 and 6.")
+
+    secret_code = generate_code()
+    attempts = 0
+
+    while True:
+        attempts += 1
+        user_guess = get_user_guess()
+
+        if user_guess == secret_code:
+            print(f"Congratulations! You guessed the code {secret_code} in {attempts} attempts.")
+            break
+        
+        exact_matches, total_matches = evaluate_guess(secret_code, user_guess)
+        print(f"Exact matches: {exact_matches}")
+        print(f"Total matches (excluding exact matches): {total_matches}")
+        print("Try again!")
+
+    print("Thanks for playing!")
+
+# Run the game
+mastermind()
